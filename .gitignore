@@ -1,0 +1,6 @@
+dist
+cert
+node_modules
+.idea
+docker-compose.yml
+.env

@@ -1,0 +1,70 @@
+#!/usr/bin/env node
+if (!process.env.NODE_ENV) {
+  require('dotenv').config();
+}
+
+var basePath = (process.env.NODE_ENV === 'development' ? '../src' : '../dist');
+
+var app = require(`${basePath}/app`);
+var connectionHandler = require(`${basePath}/websocket/connection-handler`);
+var verifyClient = require(`${basePath}/websocket/verify-client`);
+var http = require('http');
+var https = require('https');
+var fs = require('fs');
+var path = require('path');
+var WebSocket = require('ws');
+
+var sslConfig = {
+  key: fs.readFileSync(path.resolve('cert/privkey.pem')),
+  cert: fs.readFileSync(path.resolve('cert/fullchain.pem'))
+};
+
+var port = normalizePort(process.env.PORT || '3001');
+var sslPort = normalizePort(process.env.SSL_PORT || '3002');
+var wsPort = normalizePort(process.env.WS_PORT || '3003');
+var wssPort = normalizePort(process.env.WSS_PORT || '3004');
+
+var server = http.createServer(app);
+var secureServer = https.createServer(sslConfig, app);
+
+var wsServer = new http.createServer();
+var wssServer = new https.createServer(sslConfig);
+
+var ws = new WebSocket.Server({ server: wsServer, verifyClient });
+var wss = new WebSocket.Server({ server: wssServer, verifyClient });
+
+ws.on('connection', connectionHandler);
+wss.on('connection', connectionHandler);
+
+server.listen(port, () => {
+  console.log(`Web Server is listening`);
+});
+
+secureServer.listen(sslPort, () => {
+  console.log(`Secure web Server is listening`);
+});
+
+wsServer.listen(wsPort, () => {
+  console.log(`Websocket Server is listening`);
+});
+
+wssServer.listen(wssPort, () => {
+  console.log(`Secure websocket Server is listening`);
+});
+
+function normalizePort(val) {
+  var port = parseInt(val, 10);
+
+  if (isNaN(port)) {
+    // named pipe
+    return val;
+  }
+
+  if (port >= 0) {
+    // port number
+    return port;
+  }
+
+  return false;
+}
+
