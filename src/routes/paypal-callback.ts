@@ -22,7 +22,7 @@ router.post('/', async (req, res, next) => {
     // Build the body of the verification post message by prefixing 'cmd=_notify-validate'.
     let verificationBody = `cmd=_notify-validate&${formUrlEncodedBody}`;
 
-    let settings, response;
+    let settings, response, custom;
     try {
         response = await nodeFetch('https://ipnpb.sandbox.paypal.com/cgi-bin/webscr', {
             method: 'POST',
@@ -33,20 +33,23 @@ router.post('/', async (req, res, next) => {
         return next(new ApiError(e));
     }
 
-    const custom = JSON.parse(req.body.custom);
+    try {
+        custom = JSON.parse(req.body.custom);
+    } catch (e) {
+        return next(new ApiError(e));
+    }
+
     try {
         settings = await Setting.findOne({ where: { userId: custom.userId }});
     } catch (e) {
         return next(new DatabaseError(e));
     }
 
-    const body = (await response.json());
+    const body = (await response.text());
 
     // Check the response body for validation results.
     if (body === "VERIFIED") {
         console.log(`Verified IPN: IPN message for Transaction ID: ${ipnTransactionMessage.txn_id} is verified.`);
-        const custom = JSON.parse(req.body.custom);
-
         const transaction = {
             title: req.body.item_name,
             message: custom.message,

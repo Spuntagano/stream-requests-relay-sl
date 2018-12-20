@@ -21,7 +21,7 @@ services:
       NODE_ENV: production
       VERSION: 0.0.3
       MYSQL_HOST: mysql
-      MYSQL_USER: StreamRequests
+      MYSQL_USER: StreamRequestsSL
       MYSQL_PASSWORD:
       MYSQL_DATABASE_NAME: StreamRequestsSLStaging
     restart: always
@@ -31,7 +31,7 @@ services:
     image: mysql:5.7
     environment:
       MYSQL_DATABASE: StreamRequestsSLStaging
-      MYSQL_USER: StreamRequests
+      MYSQL_USER: StreamRequestsSL
       MYSQL_PASSWORD:
       MYSQL_RANDOM_ROOT_PASSWORD: '1'
     restart: always
