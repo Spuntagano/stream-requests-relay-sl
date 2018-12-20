@@ -40,8 +40,10 @@ router.post('/', async (req, res, next) => {
         return next(new DatabaseError(e));
     }
 
+    const body = (await response.json());
+
     // Check the response body for validation results.
-    if (response.body === "VERIFIED") {
+    if (body === "VERIFIED") {
         console.log(`Verified IPN: IPN message for Transaction ID: ${ipnTransactionMessage.txn_id} is verified.`);
         const custom = JSON.parse(req.body.custom);
 
@@ -62,12 +64,11 @@ router.post('/', async (req, res, next) => {
         Transaction.create(requestReceived);
         notify(requestReceived, custom.userId);
 
-    } else if (response.body === "INVALID") {
+    } else if (body === "INVALID") {
         console.error(`Invalid IPN: IPN message for Transaction ID: ${ipnTransactionMessage.txn_id} is invalid.`);
     } else {
         console.error("Unexpected reponse body.");
     }
-
 });
 
 module.exports = router;

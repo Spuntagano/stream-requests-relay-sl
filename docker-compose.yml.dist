@@ -1,6 +1,6 @@
 version: '3.1'
 services:
-  stream-requests-relay:
+  stream-requests-relay-sl:
     build: .
     ports:
       - 3001:3001
@@ -8,7 +8,7 @@ services:
       - 3003:3003
       - 3004:3004
     volumes:
-      - ./cert:/www/stream-requests-relay/cert
+      - ./cert:/www/stream-requests-relay-sl/cert
     environment:
       PORT: 3001
       SSL_PORT: 3002
@@ -23,14 +23,14 @@ services:
       MYSQL_HOST: mysql
       MYSQL_USER: StreamRequests
       MYSQL_PASSWORD:
-      MYSQL_DATABASE_NAME: StreamRequestsStaging
+      MYSQL_DATABASE_NAME: StreamRequestsSLStaging
     restart: always
     depends_on:
       - mysql
   mysql:
     image: mysql:5.7
     environment:
-      MYSQL_DATABASE: StreamRequestsStaging
+      MYSQL_DATABASE: StreamRequestsSLStaging
       MYSQL_USER: StreamRequests
       MYSQL_PASSWORD:
       MYSQL_RANDOM_ROOT_PASSWORD: '1'
