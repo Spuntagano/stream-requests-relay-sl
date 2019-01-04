@@ -9,7 +9,7 @@ module.exports = sequelize.define('request', {
         type: Sequelize.TEXT
     },
     price: {
-        type: Sequelize.INTEGER
+        type: Sequelize.FLOAT
     },
     index: {
         type: Sequelize.INTEGER

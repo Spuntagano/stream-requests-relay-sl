@@ -1,5 +1,4 @@
 var express = require('express');
-var sequelize = require('../lib/sequelize');
 var Setting = require('../models/Setting');
 var User = require('../models/User');
 var auth = require('../lib/auth');
@@ -8,24 +7,18 @@ var AuthorizationError = require('../errors/AuthorizationError');
 
 var router = express.Router();
 
-module.exports = router.get('/', async (req, res, next) => {
-    let token, settings;
+module.exports = router.get('/:userId', async (req, res, next) => {
+    let settings;
 
     try {
-        token = await auth(req.headers.authorization);
-    } catch(e) {
-        return next(new AuthorizationError(e));
-    }
-
-    try {
-        await User.findOrCreate({ where: { userId: token.uid }, defaults: {
-            userId: token.uid
+        await User.findOrCreate({ where: { userId: req.params.userId }, defaults: {
+            userId: req.params.userId
         }});
 
-        settings = await Setting.findOrCreate({ where: { userId: token.uid }, defaults: {
+        settings = await Setting.findOrCreate({ where: { userId: req.params.userId }, defaults: {
             showImage: true,
             playSound: true,
-            sendChat: true
+            paypalEmail: ''
         }});
     } catch (e) {
         return next(new DatabaseError(e));
@@ -44,14 +37,21 @@ router.post('/', async (req, res, next) => {
     }
 
     try {
-        await User.findOrCreate({ where: { userId: token.uid }, defaults: {
-            userId: token.uid
+        let user = await User.findOrCreate({ where: { userId: token.uid }, defaults: {
+            userId: token.uid,
+            displayName: req.body.displayName
         }});
+
+        if (!user[1]) {
+            user[0].update({
+                displayName: req.body.displayName
+            });
+        }
 
         setting = await Setting.findOrCreate({ where: { userId: token.uid }, defaults: {
             showImage: settings.showImage,
             playSound: settings.playSound,
-            sendChat: settings.sendChat,
+            paypalEmail: settings.paypalEmail,
             userId: token.uid
         }});
 
@@ -59,7 +59,7 @@ router.post('/', async (req, res, next) => {
             setting[0].update({
                 showImage: settings.showImage,
                 playSound: settings.playSound,
-                sendChat: settings.sendChat
+                paypalEmail: settings.paypalEmail
             });
         }
     } catch(e) {

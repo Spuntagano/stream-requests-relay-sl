@@ -9,12 +9,12 @@ var AuthorizationError = require('../errors/AuthorizationError');
 
 var router = express.Router();
 
-router.get('/:displayName', async (req, res, next) => {
+router.get('/:userId', async (req, res, next) => {
     let requests;
 
     try {
         // @ts-ignore
-        requests = await Request.findAll({ where: { userId: req.params.displayName }});
+        requests = await Request.findAll({ where: { userId: req.params.userId }});
     } catch (e) {
         return next(new DatabaseError(e));
     }
@@ -23,7 +23,7 @@ router.get('/:displayName', async (req, res, next) => {
 });
 
 router.post('/', async (req, res, next) => {
-    let token, requests = req.body.requests;
+    let token, user, requests = req.body.requests;
 
     try {
         token = await auth(req.headers.authorization);
@@ -32,7 +32,15 @@ router.post('/', async (req, res, next) => {
     }
 
     try {
-        await User.findOrCreate({ where: { userId: token.uid }});
+        user = await User.findOrCreate({ where: { userId: token.uid }, defaults: {
+            userId: token.uid
+        }});
+
+        if (!user[1]) {
+            user[0].update({
+                displayName: req.body.displayName
+            });
+        }
 
         requests.forEach(async (r, index) => {
             // @ts-ignore
@@ -45,7 +53,7 @@ router.post('/', async (req, res, next) => {
                     title: r.title,
                     description: r.description,
                     active: r.active,
-                    price: r.price,
+                    price: parseFloat(r.price).toFixed(2),
                     index: index,
                     userId: token.uid
                 }
@@ -56,7 +64,7 @@ router.post('/', async (req, res, next) => {
                     title: r.title,
                     description: r.description,
                     active: r.active,
-                    price: r.price
+                    price: parseFloat(r.price).toFixed(2),
                 })
             }
         });

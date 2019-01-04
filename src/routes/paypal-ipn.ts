@@ -1,20 +1,21 @@
-import {Settings} from 'http2';
-
 var express = require('express');
 var nodeFetch = require('node-fetch');
 var querystring = require('querystring');
+var { CensorSensor } = require('censor-sensor');
 // @ts-ignore
 var DatabaseError = require('../errors/DatabaseError');
 var ApiError = require('../errors/ApiError');
+var RequestError = require('../errors/RequestError');
 var Transaction = require('../models/Transaction');
 var Setting = require('../models/Setting');
 var notify = require('../lib/notify');
 
 var router = express.Router();
 
-router.post('/', async (req, res, next) => {
-    res.status(204).send();
+var censor = new CensorSensor();
+censor.enableTier(1);
 
+router.post('/', async (req, res, next) => {
     // JSON object of the IPN message consisting of transaction details.
     let ipnTransactionMessage = req.body;
     // Convert JSON ipn data to a query string since Google Cloud Function does not expose raw request data.
@@ -24,11 +25,11 @@ router.post('/', async (req, res, next) => {
 
     let settings, response, custom;
     try {
-        response = await nodeFetch('https://ipnpb.sandbox.paypal.com/cgi-bin/webscr', {
+        response = await nodeFetch(process.env.PAYPAL_IPN_URL, {
             method: 'POST',
             body: verificationBody
         });
-        if (!response.ok) throw response;
+        if (!response.ok) throw(response);
     } catch(e) {
         return next(new ApiError(e));
     }
@@ -36,7 +37,7 @@ router.post('/', async (req, res, next) => {
     try {
         custom = JSON.parse(req.body.custom);
     } catch (e) {
-        return next(new ApiError(e));
+        return next(new RequestError(e, 'Invalid request: custom field must be valid json'));
     }
 
     try {
@@ -52,7 +53,7 @@ router.post('/', async (req, res, next) => {
         console.log(`Verified IPN: IPN message for Transaction ID: ${ipnTransactionMessage.txn_id} is verified.`);
         const transaction = {
             title: req.body.item_name,
-            message: custom.message,
+            message: censor.cleanProfanity(custom.message),
             displayName: custom.displayName,
             transactionId: ipnTransactionMessage.txn_id,
             price: req.body.amount,
@@ -64,7 +65,7 @@ router.post('/', async (req, res, next) => {
             settings
         };
 
-        Transaction.create(requestReceived);
+        Transaction.create(transaction);
         notify(requestReceived, custom.userId);
 
     } else if (body === "INVALID") {
@@ -72,6 +73,8 @@ router.post('/', async (req, res, next) => {
     } else {
         console.error("Unexpected reponse body.");
     }
+
+    res.status(204).send();
 });
 
 module.exports = router;
