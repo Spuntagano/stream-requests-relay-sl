@@ -12,6 +12,7 @@
     "censor-sensor": "^1.0.4",
     "cookie-parser": "~1.4.3",
     "express": "~4.16.0",
+    "express-ipn": "^1.0.3",
     "jsonwebtoken": "^8.3.0",
     "mysql2": "^1.6.4",
     "node-fetch": "^2.2.1",

@@ -17,6 +17,7 @@ services:
       ORIGIN: https://localhost.rig.twitch.tv:8080
       WS_ORIGIN: http://localhost:3005
       SECRET_KEY:
+      PAYPAL_SANDBOX: true
       TWITCH_API_BASE_URL: https://api.twitch.tv
       NODE_ENV: production
       VERSION: 0.0.3
