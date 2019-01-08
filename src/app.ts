@@ -1,6 +1,7 @@
 var express = require('express');
 var path = require('path');
 var cookieParser = require('cookie-parser');
+var bodyParser = require('body-parser');
 
 var allowCors = require('./middlewares/allow-cors');
 var errorHandler = require('./middlewares/error-handler');
@@ -25,11 +26,14 @@ app.use(allowCors);
 app.use('/', indexRouter);
 app.use('/request', requestRouter);
 app.use('/setting', configRouter);
-app.use('/paypal-ipn', paypalIpnRouter);
-app.use('/paypal-ipn-mock', paypalIpnMockRouter);
 app.use('/notify', notifyRouter);
 app.use('/transaction', transactionRouter);
 app.use('/user', userRouter);
+
+app.use(bodyParser.text());
+
+app.use('/paypal-ipn', paypalIpnRouter);
+app.use('/paypal-ipn-mock', paypalIpnMockRouter);
 
 app.use(errorHandler);
 
