@@ -4,7 +4,9 @@ var transactionHandler = require('../lib/transactionHandler');
 var router = express.Router();
 
 router.post('/', async (req, res) => {
-    transactionHandler(req.body);
+    if (process.env.PAYPAL_MODE === 'developement') {
+        transactionHandler(req.body);
+    }
 
     res.status(204).send();
 });

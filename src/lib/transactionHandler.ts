@@ -4,12 +4,6 @@ var Setting = require('../models/Setting');
 var notify = require('./notify');
 
 module.exports = async (ipnContent) => {
-    console.log(ipnContent);
-
-    if (process.env.PAYPAL_MODE !== 'developement') {
-        return;
-    }
-
     let custom, settings;
     let censor = new CensorSensor();
     censor.enableTier(1);
