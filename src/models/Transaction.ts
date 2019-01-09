@@ -3,7 +3,7 @@ var sequelize = require('../lib/sequelize');
 
 module.exports = sequelize.define('transaction', {
     price: {
-        type: Sequelize.INTEGER
+        type: Sequelize.FLOAT
     },
     message: {
         type: Sequelize.STRING
