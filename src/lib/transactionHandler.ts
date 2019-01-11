@@ -65,7 +65,7 @@ module.exports = async (ipnContent) => {
         message: message,
         displayName: displayName,
         transactionId: ipnContent.txn_id,
-        price: ipnContent.amount,
+        price: ipnContent.mc_gross,
         userId: custom.userId
     };
 
