@@ -18,6 +18,7 @@ module.exports = router.get('/:userId', async (req, res, next) => {
         settings = await Setting.findOrCreate({ where: { userId: req.params.userId }, defaults: {
             showImage: true,
             playSound: true,
+            profanityFilter: true,
             paypalEmail: ''
         }});
     } catch (e) {
@@ -51,6 +52,7 @@ router.post('/', async (req, res, next) => {
         setting = await Setting.findOrCreate({ where: { userId: token.uid }, defaults: {
             showImage: settings.showImage,
             playSound: settings.playSound,
+            profanityFilter: settings.profanityFilter,
             paypalEmail: settings.paypalEmail,
             userId: token.uid
         }});
@@ -59,6 +61,7 @@ router.post('/', async (req, res, next) => {
             setting[0].update({
                 showImage: settings.showImage,
                 playSound: settings.playSound,
+                profanityFilter: settings.profanityFilter,
                 paypalEmail: settings.paypalEmail
             });
         }

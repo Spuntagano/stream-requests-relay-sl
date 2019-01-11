@@ -8,6 +8,9 @@ module.exports = sequelize.define('setting', {
     playSound: {
         type: Sequelize.BOOLEAN,
     },
+    profanityFilter: {
+        type: Sequelize.BOOLEAN,
+    },
     paypalEmail: {
         type: Sequelize.STRING
     },
