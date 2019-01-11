@@ -44,7 +44,7 @@ module.exports = async (ipnContent) => {
     }
 
     if (ipnContent.notify_version) {
-        if (request.price !== ipnContent.price ||
+        if (request.price !== ipnContent.amount ||
             request.title !== ipnContent.title ||
             settings.paypalEmail !== ipnContent.receiver_email ||
             ipnContent.mc_currency !== 'USD') {
