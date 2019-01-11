@@ -44,8 +44,8 @@ module.exports = async (ipnContent) => {
     }
 
     if (ipnContent.notify_version) {
-        if (request.price !== ipnContent.amount ||
-            request.title !== ipnContent.title ||
+        if (String(request.price) !== ipnContent.mc_gross ||
+            request.title !== ipnContent.item_name ||
             settings.paypalEmail !== ipnContent.receiver_email ||
             ipnContent.mc_currency !== 'USD') {
             console.error('Invalid IPN request: Incorrect information received');
