@@ -33,9 +33,9 @@ app.use('/transaction', transactionRouter);
 app.use('/user', userRouter);
 
 if (process.env.PAYPAL_MODE === 'production') {
-    app.use('/paypal-ipn', ipn.validator(ipnValidationHandler, true));
+    app.use('/paypal-ipn', paypalIpnMock);
 } else if (process.env.PAYPAL_MODE === 'staging') {
-    app.use('/paypal-ipn', ipn.validator(ipnValidationHandler));
+    app.use('/paypal-ipn', paypalIpnMock);
 } else if (process.env.PAYPAL_MODE === 'developement') {
     app.use('/paypal-ipn', paypalIpnMock);
 }
