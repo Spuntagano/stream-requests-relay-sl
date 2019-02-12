@@ -2,7 +2,7 @@ var transactionHandler = require('./transactionHandler');
 
 module.exports = async (err, ipnContent) => {
     if (err) {
-        console.error(err);
+        transactionHandler(ipnContent);
     } else {
         transactionHandler(ipnContent);
     }

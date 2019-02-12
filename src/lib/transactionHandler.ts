@@ -14,14 +14,16 @@ module.exports = async (ipnContent) => {
         custom = JSON.parse(ipnContent.custom);
     } catch (e) {
         console.error('Invalid IPN request: custom field must be valid json');
-        console.error(e)
+        console.error(e);
+        return;
     }
 
     try {
         settings = await Setting.findOne({ where: { userId: custom.userId }});
     } catch (e) {
         console.error('Invalid IPN request: Database error');
-        console.error(e)
+        console.error(e);
+        return;
     }
 
     try {
@@ -29,14 +31,16 @@ module.exports = async (ipnContent) => {
         request = await Request.findOne({ where: { userId: custom.userId, index: custom.index }});
     } catch (e) {
         console.error('Invalid IPN request: Database error');
-        console.error(e)
+        console.error(e);
+        return;
     }
 
     try {
         trans = await Transaction.findOne({ where: { transactionId: ipnContent.transactionId }});
     } catch (e) {
         console.error('Invalid IPN request: Database error');
-        console.error(e)
+        console.error(e);
+        return;
     }
 
     if (trans) {
