@@ -16,6 +16,7 @@
     "jsonwebtoken": "^8.3.0",
     "mysql2": "^1.6.4",
     "node-fetch": "^2.2.1",
+    "paypal-ipn": "^3.0.0",
     "sequelize": "^4.41.2",
     "ws": "^6.1.0"
   },

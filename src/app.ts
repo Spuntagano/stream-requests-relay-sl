@@ -1,7 +1,6 @@
 var express = require('express');
 var path = require('path');
 var cookieParser = require('cookie-parser');
-var ipn = require('express-ipn');
 var bodyParser = require('body-parser');
 
 var allowCors = require('./middlewares/allow-cors');
@@ -12,8 +11,7 @@ var configRouter = require('./routes/setting');
 var notifyRouter = require('./routes/notify');
 var transactionRouter = require('./routes/transaction');
 var userRouter = require('./routes/user');
-var paypalIpnMock = require('./routes/paypal-ipn-mock');
-var ipnValidationHandler = require('./lib/ipnValidationHandler');
+var paypalIpn = require('./routes/paypal-ipn');
 require('./models/relationships');
 
 var app = express();
@@ -31,14 +29,7 @@ app.use('/setting', configRouter);
 app.use('/notify', notifyRouter);
 app.use('/transaction', transactionRouter);
 app.use('/user', userRouter);
-
-if (process.env.PAYPAL_MODE === 'production') {
-    app.use('/paypal-ipn', ipn.validator(ipnValidationHandler, true));
-} else if (process.env.PAYPAL_MODE === 'staging') {
-    app.use('/paypal-ipn', ipn.validator(ipnValidationHandler));
-} else if (process.env.PAYPAL_MODE === 'developement') {
-    app.use('/paypal-ipn', paypalIpnMock);
-}
+app.use('/paypal-ipn', paypalIpn);
 
 app.use(errorHandler);
 
