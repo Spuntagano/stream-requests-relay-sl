@@ -44,7 +44,7 @@ module.exports = async (ipnContent) => {
     }
 
     if (ipnContent.notify_version) {
-        if (String(request.price) !== ipnContent.mc_gross ||
+        if (request.price !== parseFloat(ipnContent.mc_gross) ||
             request.title !== ipnContent.item_name ||
             settings.paypalEmail !== ipnContent.receiver_email ||
             ipnContent.mc_currency !== 'USD') {
@@ -65,7 +65,7 @@ module.exports = async (ipnContent) => {
         message: message,
         displayName: displayName,
         transactionId: ipnContent.txn_id,
-        price: ipnContent.mc_gross,
+        price: parseFloat(ipnContent.mc_gross),
         userId: custom.userId
     };
 
