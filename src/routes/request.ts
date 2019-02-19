@@ -1,5 +1,4 @@
 var express = require('express');
-var sequelize = require('../lib/sequelize');
 // @ts-ignore
 var Request = require('../models/Request');
 var User = require('../models/User');
@@ -33,7 +32,8 @@ router.post('/', async (req, res, next) => {
 
     try {
         user = await User.findOrCreate({ where: { userId: token.uid }, defaults: {
-            userId: token.uid
+            userId: token.uid,
+            displayName: req.body.displayName
         }});
 
         if (!user[1]) {

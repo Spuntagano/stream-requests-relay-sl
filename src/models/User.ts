@@ -12,5 +12,8 @@ module.exports = sequelize.define('user', {
     indexes: [{
         unique: true,
         fields: ['userId']
+    }, {
+        unique: true,
+        fields: ['displayName']
     }]
 });

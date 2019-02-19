@@ -4,11 +4,11 @@ var DatabaseError = require('../errors/DatabaseError');
 
 var router = express.Router();
 
-module.exports = router.get('/:userId', async (req, res, next) => {
+module.exports = router.get('/:displayName', async (req, res, next) => {
     let user;
 
     try {
-        user = await User.findOne({ where: { userId: req.params.userId }});
+        user = await User.findOne({ where: { displayName: req.params.displayName }});
     } catch (e) {
         return next(new DatabaseError(e));
     }
