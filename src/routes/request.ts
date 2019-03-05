@@ -1,4 +1,5 @@
 var express = require('express');
+var Sequelize = require('sequelize');
 // @ts-ignore
 var Request = require('../models/Request');
 var User = require('../models/User');
@@ -41,6 +42,15 @@ router.post('/', async (req, res, next) => {
                 displayName: req.body.displayName
             });
         }
+
+        // @ts-ignore
+        await Request.destroy({
+            where: {
+                index: {
+                    [Sequelize.Op.gte]: requests.length
+                }
+            }
+        });
 
         requests.forEach(async (r, index) => {
             // @ts-ignore
