@@ -69,7 +69,7 @@ module.exports = async (ipnContent) => {
         message: message,
         displayName: displayName,
         transactionId: ipnContent.txn_id,
-        price: parseFloat(ipnContent.mc_gross),
+        price: request.price,
         userId: custom.userId
     };
 
