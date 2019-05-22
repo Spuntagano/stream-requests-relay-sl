@@ -63,7 +63,7 @@ router.post('/', async (req, res, next) => {
                     title: r.title,
                     description: r.description,
                     active: r.active,
-                    price: parseFloat(r.price).toFixed(2),
+                    price: parseFloat(r.price || 1).toFixed(2),
                     index: index,
                     userId: token.uid
                 }
@@ -74,7 +74,7 @@ router.post('/', async (req, res, next) => {
                     title: r.title,
                     description: r.description,
                     active: r.active,
-                    price: parseFloat(r.price).toFixed(2),
+                    price: parseFloat(r.price || 1).toFixed(2),
                 })
             }
         });
